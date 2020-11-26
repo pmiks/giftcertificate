@@ -7,6 +7,8 @@ import Button from '@material-ui/core/Button';
 import {Grid,Paper,Box,Container,Typography} from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
 import { BorderBottom } from '@material-ui/icons'
+import {useRouter} from 'next/router'
+import { route } from 'next/dist/next-server/server/router'
 
 const useStyles=makeStyles((theme)=>({
   root:{
@@ -58,9 +60,10 @@ const useStyles=makeStyles((theme)=>({
 
 export default function Home() {
   let classes=useStyles()
-
-  const id='ELENA222'
-  let gift=certificateData.find(el=>el.id.toUpperCase()==id.toUpperCase())
+  const router=useRouter()
+  let id=router.query.id
+  //const id='ELENA2'
+  let gift=certificateData.find(el=>el.id==id)
   console.log(gift)
 
   return (<main>
@@ -73,7 +76,7 @@ export default function Home() {
     <Container fixed>
 
     <Box className={classes.header}>
-       <Typography variant="h3">СЕРТИФИКАТ{id}</Typography>
+       <Typography variant="h3">СЕРТИФИКАТ</Typography>
        <Typography variant="h4">{gift.subject}</Typography>
     </Box>
     <Box className={classes.field}>
