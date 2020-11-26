@@ -21,7 +21,7 @@ const useStyles=makeStyles((theme)=>({
     backgroundRepeat:"no-repeat",
     backgroundPosition:"top center",
     maxWidth:"900px",
-    minWidth:"320px",
+    minWidth:"700px",
     minHeight:"1024px",
     align:'center',
     justifyAlign:'center',
