@@ -28,7 +28,6 @@ async function send(user='Anonym',sertname="Unknown",wish=null){
 
 export default (req, res) => {
   console.log(req.body)
-  //let r=JSON.parse(req.body)
 
   send(req.body.user,req.body.cert,req.body.wish).then(
     (arg)=>{

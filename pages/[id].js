@@ -16,8 +16,8 @@ import TextField from '@material-ui/core/TextField';
 const useStyles=makeStyles((theme)=>({
   root:{
     flexGrow:1,
-    padding:theme.spacing(12),
-    paddingTop:theme.spacing(8),
+    padding:theme.spacing(8),
+    paddingTop:theme.spacing(12),
     paddingBottom:theme.spacing(24),
     position:"absolute",
     backgroundSize:"contain",
@@ -33,7 +33,7 @@ const useStyles=makeStyles((theme)=>({
     justifyAlign:'center',
     textAlign:'center',
     paddingTop:theme.spacing(5),
-    marginBottom:theme.spacing(2)
+    marginBottom:theme.spacing(3)
   },
   field:{
     justifyAlign:'center',
@@ -41,6 +41,14 @@ const useStyles=makeStyles((theme)=>({
     marginTop:theme.spacing(2),
     marginBottom:theme.spacing(2),
     fontWeight:"bold"
+  },
+  conditions:{
+    justifyAlign:'center',
+    textAlign:'left',
+    marginTop:theme.spacing(2),
+    marginBottom:theme.spacing(2),
+    fontWeight:"normal",
+    fontStyle:"italic"
   },
   value:{
     justifyAlign:'center',
@@ -53,6 +61,10 @@ const useStyles=makeStyles((theme)=>({
   cupons:{
     justifyAlign:'center',
     textAlign:'center',
+    padding:"1px",
+    paddingTop:"4px",
+//    borderWidth:"1px",
+//    borderColor:"red",
 //    marginTop:theme.spacing(1),
 //    marginBottom:theme.spacing(1),
 //    border:'1px solod red'
@@ -152,11 +164,11 @@ export default function Home() {
         <Box className={classes.field}>
               {gift.conditionsTitle} 
         </Box>
-        <Box className={classes.field}><ol>
+        <Box className={classes.conditions}><ol>
       {gift.conditions.map(x=>{return <li>{x}</li>})}
       </ol>
       </Box>
-      <Grid container spacing={1} justify="center">
+      <Grid container spacing={0} justify="center">
       {gift.cupons&&gift.cupons.map((x,i)=>{
         return <Grid item 
         direction="row"
@@ -178,14 +190,16 @@ export default function Home() {
             </div>
           </Grid>})}
       </Grid>
-          {!gift.cupons&&<Box justify="center"  textAlign="center">
+          {!gift.cupons&&<Box justify="center"  textAlign="center" style={{marginTop:'30px',marginBottom:'50px'}}>
                   <TextField
+                  textAlign="center"
                   value={gift.wish}
+                  multiline
+                  rows={3}
                   id="standard-full-width"
                   label="Мое желание"
                   placeholder="Введите здесь свое желание"
                   helperText='Нажав кнопку "Исполнить" желание уже не поменять!!!'
-                  style={{ margin: 8 }}
                   onChange={(event)=>{
                     let g=gift
                     gift.wish=event.target.value
@@ -198,7 +212,7 @@ export default function Home() {
                   shrink: true,
                   }}
                 />
-          <Button variant="contained" 
+          <Button variant="contained" style={{marginTop:'10px',marginBottom:'10px'}} 
             color="primary" 
             onClick={()=>{handlerDoneButton()}}
             disabled={gift.certificateDone}
@@ -207,10 +221,13 @@ export default function Home() {
           </Button>
           </Box>
           }
-          <Box justify="right"  textAlign="right">
-          <Typography component="h6" style={{marginTop:'20px'}}>
-              Действителен с: {gift.validFrom}</Typography>
-          <Typography component="h6">Действителен до: {gift.validTo}</Typography> 
+          <Box justify="right"  textAlign="right" style={{marginTop:'40px'}}>
+          <Typography component="h6">
+              Действителен с: {gift.validFrom}
+          </Typography>
+          <Typography component="h6">
+            Действителен до: {gift.validTo}
+          </Typography> 
           </Box>
         </Container>
       </Paper>
