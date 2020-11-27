@@ -3,7 +3,7 @@ const fs = require('fs')
 
 export default (req, res) => {
 //    fs.appendFile('log.log','Лог')
-    fs.readFile('./jsondata/'+'cert.json',
+    fs.readFile('cert.json',
         (err,data)=>{
             if (err) {
                 res.statusCode = 200
