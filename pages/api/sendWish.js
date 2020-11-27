@@ -1,7 +1,9 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+
+const fs = require('fs')
 const nodemailer = require('nodemailer')
 
-async function send(user='Anonym',sertname="Unknown",reqest=null){  
+async function send(user='Anonym',sertname="Unknown",wish=null){  
   let testEmailAccount = await nodemailer.createTestAccount()
     let transporter = nodemailer.createTransport({
       host: 'smtp.yandex.ru',
@@ -17,15 +19,18 @@ async function send(user='Anonym',sertname="Unknown",reqest=null){
       from: '"Сертификат" listovoi.evgeny@yandex.ru',
       to: 'e.pmiks@yandex.ru',
       subject: `Сообщение ${user}  по сертификату ${sertname}`,
-      text: `'${user} нажал "Погасить" в сертификате ${sertname}${reqest?'.':' ,желание: '+request+'.'}`,
+      text: `${user} нажал(а) "Исполнить" в сертификате "${sertname}"${wish?' '+wish:'.'}`,
       html:
-      `${user} нажал "Погасить" в сертификате ${sertname}${reqest?'.':' ,желание: '+request+'.'}`,
+      `${user} нажал(а) "Исполнить" в сертификате "${sertname}"${wish?' '+wish:'.'}`,
     })
     return result
   }
 
 export default (req, res) => {
-  send('Пустовая Елена Анатольевна','желание','Купон 1').then(
+  console.log(req.body)
+  //let r=JSON.parse(req.body)
+
+  send(req.body.user,req.body.cert,req.body.wish).then(
     (arg)=>{
       res.statusCode = 200
       res.json(JSON.stringify(arg))

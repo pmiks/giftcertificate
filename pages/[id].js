@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import React from 'react'
+import React, { useEffect } from 'react'
 import styles from '../styles/Home.module.css'
 import DenseAppBar from '../src/header'
 import {certificateData} from '../src/data'
@@ -9,7 +9,8 @@ import {makeStyles} from '@material-ui/core/styles';
 import { BorderBottom } from '@material-ui/icons'
 import {useRouter} from 'next/router'
 import { route } from 'next/dist/next-server/server/router'
-
+import { useState } from 'react';
+import TextField from '@material-ui/core/TextField';
 
 
 const useStyles=makeStyles((theme)=>({
@@ -52,28 +53,79 @@ const useStyles=makeStyles((theme)=>({
   cupons:{
     justifyAlign:'center',
     textAlign:'center',
-    marginTop:theme.spacing(1),
-    marginBottom:theme.spacing(1),
-    border:'1px solod red'
+//    marginTop:theme.spacing(1),
+//    marginBottom:theme.spacing(1),
+//    border:'1px solod red'
   }
 
 
 }))
 
-let handlerButton=()=>{
-   //send()
-}
 
+async function postData(url = '', data = {}) {
+  // Default options are marked with *
+  const response = await fetch(url, {
+    method: 'POST', // *GET, POST, PUT, DELETE, etc.
+    mode: 'cors', // no-cors, *cors, same-origin
+    cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+    credentials: 'same-origin', // include, *same-origin, omit
+    headers: {
+      'Content-Type': 'application/json'
+      // 'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    redirect: 'follow', // manual, *follow, error
+    referrerPolicy: 'no-referrer', // no-referrer, *client
+    body: JSON.stringify(data) // body data type must match "Content-Type" header
+  });
+  return await response.json(); // parses JSON response into native JavaScript objects
+}
 
 
 export default function Home() {
   let classes=useStyles()
   const router=useRouter()
   let id=router.query.id
-  //const id='ELENA2'
 
-  let gift=certificateData.find(el=>el.id==id)
-  console.log(gift)
+  let handlerButton=(id)=>{
+    //send()
+    let g=gift
+    if (confirm('Вы уверенны')){
+      postData('https://giftcertificate.vercel.app/api/sendWish',{user:g.resiverIP,cert:g.subject,wish:g.cupons[id].name})      
+//      postData('http://localhost:3030/api/sendWish',{user:g.resiverIP,cert:g.subject,wish:g.cupons[id].name})
+      .then((data) => {
+        // g.cupons[id].done=true
+        // setGift({...g})
+        console.log(data); // JSON data parsed by `response.json()` call
+      })
+//      .finally()
+    g.cupons[id].done=true
+    setGift({...g})
+    }
+ }
+ let handlerDoneButton=()=>{
+  //send()
+  let g=gift
+  if (confirm(`Ваше желание "${g.wish}"? Вы уверенны?`)){
+    postData('https://giftcertificate.vercel.app/api/sendWish',{user:g.resiverIP,cert:g.subject,wish:`Мое желание: "${g.wish}". Прошу исполнить!!!`})
+//    postData('http://localhost:3030/api/sendWish',{user:g.resiverIP,cert:g.subject,wish:`Мое желание: "${g.wish}". Прошу исполнить!!!`})
+    .then((data) => {
+      // g.cupons[id].done=true
+      // setGift({...g})
+      console.log(data); // JSON data parsed by `response.json()` call
+    })
+//      .finally()
+  g.certificateDone=true
+  setGift({...g})
+  }
+}
+
+  //const id='ELENA2'
+  certificateData.find(el=>el.id==id)
+  useEffect(()=>{
+    setGift(certificateData.find(el=>el.id==id))
+  },[id])
+  
+  let [gift,setGift]=useState(certificateData.find(el=>el.id==id))
 
   return (<main>
     {gift?<Container maxWidth="xl" justify="center" alignItems="center">
@@ -105,29 +157,61 @@ export default function Home() {
       </ol>
       </Box>
       <Grid container spacing={1} justify="center">
-      {gift.cupons&&gift.cupons.map(x=>{
-        return <Grid item md={3} 
+      {gift.cupons&&gift.cupons.map((x,i)=>{
+        return <Grid item 
         direction="row"
         justify="center"
         alignItems="center"
       >
             <div className={classes.cupons}> 
-            <Typography component="h6" color="inherit">{x}</Typography>
-            <Button size="small" variant="contained" color="primary">
-      Погасить
+      <Typography component="h6" color="inherit">{x.name}</Typography>
+            <Button 
+              onClick={()=>{handlerButton(i)}}
+              size="small" 
+              variant="contained" 
+              color="primary"
+              disabled={x.done?true:false}
+              //disabled={false}
+              >
+      Исполнить
       </Button>
             </div>
           </Grid>})}
       </Grid>
+          {!gift.cupons&&<Box justify="center"  textAlign="center">
+                  <TextField
+                  value={gift.wish}
+                  id="standard-full-width"
+                  label="Мое желание"
+                  placeholder="Введите здесь свое желание"
+                  helperText='Нажав кнопку "Исполнить" желание уже не поменять!!!'
+                  style={{ margin: 8 }}
+                  onChange={(event)=>{
+                    let g=gift
+                    gift.wish=event.target.value
+                    setGift({...g})
+                  }}
+                  fullWidth
+                  margin="normal"
+                  variant="filled"
+                  InputLabelProps={{
+                  shrink: true,
+                  }}
+                />
+          <Button variant="contained" 
+            color="primary" 
+            onClick={()=>{handlerDoneButton()}}
+            disabled={gift.certificateDone}
+          >
+            Исполнить
+          </Button>
+          </Box>
+          }
           <Box justify="right"  textAlign="right">
-          <Typography component="h6">
+          <Typography component="h6" style={{marginTop:'20px'}}>
               Действителен с: {gift.validFrom}</Typography>
           <Typography component="h6">Действителен до: {gift.validTo}</Typography> 
           </Box>
-          {!gift.cupons&&
-          (<Button variant="contained" color="primary" onClick={handlerButton}>
-            Погасить
-          </Button>)}
         </Container>
       </Paper>
     </Container>
