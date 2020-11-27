@@ -16,7 +16,7 @@ import TextField from '@material-ui/core/TextField';
 const useStyles=makeStyles((theme)=>({
   root:{
     flexGrow:1,
-    padding:theme.spacing(8),
+    padding:theme.spacing(12),
     paddingTop:theme.spacing(12),
     paddingBottom:theme.spacing(24),
     position:"absolute",
